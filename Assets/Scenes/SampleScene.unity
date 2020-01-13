@@ -393,6 +393,8 @@ MonoBehaviour:
     m_Bits: 512
   waypointPrefab: {fileID: 8685438426573527509, guid: 88cd6fba287427f4393fc8974b159f82,
     type: 3}
+  waypointNextPrefab: {fileID: 7401929757471345053, guid: b436bded2763d0449bf9fc9206aa7cad,
+    type: 3}
 --- !u!1001 &330228031
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -524,6 +526,11 @@ PrefabInstance:
     - target: {fileID: 8811857960904690619, guid: 52bc6368f529da6498c6ce2f5dc1946c,
         type: 3}
       propertyPath: showOn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8811857960904690619, guid: 52bc6368f529da6498c6ce2f5dc1946c,
+        type: 3}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7860478726473779471, guid: 52bc6368f529da6498c6ce2f5dc1946c,

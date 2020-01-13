@@ -26,12 +26,11 @@ public class AttackManager
             int damage = GetBinomDamage(attacker.getStats().damage.value);
             Debug.Log("Hits enemy with " + damage + " damage");
             defender.BeAttacked(attackDirection);
+            defender.TakeDamage(damage);
         } else
         {
             Debug.Log("Misses target");
         }
-
-        
     }
 
     bool IsAttackHits(int attackValue, int defenceValue)
@@ -68,7 +67,6 @@ public class AttackManager
                 break;
             }
         }
-
         return Mathf.Max(1, damage);
     }
 }

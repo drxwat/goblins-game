@@ -10,7 +10,10 @@ public class Stat
     public int value
     {
         get => _value;
-        set => _value = value;
+        set {
+            _value = value;
+            onStatChange?.Invoke(this, value);
+        }
     }
 
     [SerializeField]
@@ -21,8 +24,10 @@ public class Stat
         set => _maxValue = value;
     }
 
-
     public Sprite uiIcon;
+
+    public delegate void StatChangeTrigger(Stat stat, int value);
+    public StatChangeTrigger onStatChange;
 
     public int GetMaxValue()
     {

@@ -12,6 +12,9 @@ public class UnitStats : MonoBehaviour
 
     public Stat[] elements;
 
+    public delegate void StatsChangeTrigger(Stat stat, int value);
+    public StatsChangeTrigger onStatChange; // broadcasts particular stat change
+
     private void Awake()
     {
         helth.value = helth.maxValue;
@@ -21,6 +24,15 @@ public class UnitStats : MonoBehaviour
         deffence.maxValue = 0;
 
         elements = new Stat[] { attack, damage, deffence, helth, movementPoints };
+
+        foreach(Stat stat in elements)
+        {
+            stat.onStatChange += BroadcastStatChange;
+        }
     }
 
+    void BroadcastStatChange(Stat stat, int value)
+    {
+        onStatChange?.Invoke(stat, value);
+    }
 }

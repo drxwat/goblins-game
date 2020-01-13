@@ -16,7 +16,7 @@ public class Unit : MonoBehaviour
     UnitStats stats;
 
     public delegate void OnStatsChange(UnitStats stats);
-    public OnStatsChange onStatChange;
+    public OnStatsChange onStatsChange; // Broadcasts all stats each stat change
 
     // Start is called before the first frame update
     void Start()
@@ -29,6 +29,10 @@ public class Unit : MonoBehaviour
         transform.position = Grid.instance.NodeFromWorldPosition(transform.position).worldPosition;
         // registring unit in manager
         UnitManager.instance.AddUnit(this);
+        stats.onStatChange += delegate (Stat stat, int value)
+        {
+            onStatsChange?.Invoke(stats);
+        };
     }
 
     public void Move(Path path, Action onEndCallback = null)
@@ -36,8 +40,13 @@ public class Unit : MonoBehaviour
         if (path.successful)
         {
             pathWaypoints = path.waypoints;
-            StopCoroutine(FollowPath(onEndCallback));
-            StartCoroutine(FollowPath(onEndCallback));
+            Action onMovementEndCallback = delegate ()
+            {
+                stats.movementPoints.value -= pathWaypoints.Length;
+                onEndCallback?.Invoke();
+            };
+            StopCoroutine(FollowPath(onMovementEndCallback));
+            StartCoroutine(FollowPath(onMovementEndCallback));
         }
     }
 
@@ -91,11 +100,23 @@ public class Unit : MonoBehaviour
         return stats;
     }
 
-    public void takeDamage(int damage)
+    public void TakeDamage(int damage)
     {
-        damage = Mathf.Min(stats.helth.value, damage);
-/*
-        stats.helth.SetValue*/
+        stats.helth.value -= Mathf.Min(stats.helth.value, damage);
+        if (stats.helth.value != 0)
+        {
+            animator.SetTrigger("isAttacked");
+        } else
+        {
+            Die();
+        }
+    }
+
+    public void Die()
+    {
+        Debug.Log("Unit is Dead " + transform.gameObject.name);
+        UnitManager.instance.RemoveUnit(this);
+        animator.SetTrigger("isDead");
     }
 
 }

@@ -39,14 +39,14 @@ public class UnitInformationUI : MonoBehaviour
     {
         portrait.sprite = unit.portrait;
         DisplayUnitStats(unit.getStats());
-        unit.onStatChange += DisplayUnitStats;
+        unit.onStatsChange += DisplayUnitStats;
         transform.gameObject.SetActive(true);
     }
 
     void ClearUnitInformation(Unit unit)
     {
         portrait.sprite = null;
-        unit.onStatChange -= DisplayUnitStats;
+        unit.onStatsChange -= DisplayUnitStats;
         transform.gameObject.SetActive(false);
     }
 

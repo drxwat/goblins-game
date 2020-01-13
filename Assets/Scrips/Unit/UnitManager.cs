@@ -8,6 +8,7 @@ public class UnitManager : MonoBehaviour
 {
     public LayerMask walkableLayer;
     public GameObject waypointPrefab;
+    public GameObject waypointNextPrefab;
     public static UnitManager instance;
 
     public delegate void SlectionTrigger(Unit unit);
@@ -50,6 +51,10 @@ public class UnitManager : MonoBehaviour
 
             if (hitUnit != null)
             {
+                if (selectedUnit && selectedUnit != hitUnit)
+                {
+                    DeselectUnit();
+                }
                 SelectUnit(hitUnit);
             }
             else if (selectedUnit) 
@@ -78,18 +83,20 @@ public class UnitManager : MonoBehaviour
             {
                 // Do Action and deselect target
                 Unit targetUnit = GetUnitFromNode(hitNode);
-                if (targetUnit != null)
+                int unitMP = selectedUnit.getStats().movementPoints.value;
+                int pathLength = currentPath.waypoints.Length;
+                if (targetUnit != null && pathLength - 1 <= unitMP)
                 {
                     MoveUnitToTargetAndAttack(currentPath, targetUnit, delegate () {
                         DeselectTarget();
                     });
-                } else
+                }
+                else
                 {
-                    MoveUnitToTarget(currentPath, delegate() {
+                    MoveUnitToTarget(pathLength > unitMP ? getPartialPath(currentPath, unitMP): currentPath, delegate () {
                         DeselectTarget();
                     });
                 }
-
             }
             else
             {
@@ -97,10 +104,23 @@ public class UnitManager : MonoBehaviour
             }
         }
     }
+    public Unit GetSelectedUnit()
+    {
+        return selectedUnit;
+    }
 
     public void AddUnit(Unit unit)
     {
         unitsSet.Add(unit);
+    }
+
+    public void RemoveUnit(Unit unit)
+    {
+        if (Grid.instance.NodeFromWorldPosition(unit.transform.position) == selectedTarget)
+        {
+            DeselectTarget();
+        }
+        unitsSet.Remove(unit);
     }
 
     public Unit GetUnitFromNode(Node node)
@@ -147,11 +167,14 @@ public class UnitManager : MonoBehaviour
             Path drawPath = currentPath;
             if (GetUnitFromNode(targetNode) != null)
             {
-                drawPath = new Path(drawPath.waypoints, drawPath.successful);
-                drawPath.waypoints = drawPath.waypoints.Take(drawPath.waypoints.Count() - 1).ToArray();
+                drawPath = getPartialPath(drawPath, drawPath.waypoints.Count() - 1);
+/*                drawPath = new Path(drawPath.waypoints, drawPath.successful);
+                drawPath.waypoints = drawPath.waypoints.Take(drawPath.waypoints.Count() - 1).ToArray();*/
             }
             ErasePathCurve();
-            DrawPathCurve(drawPath);
+            (Path head, Path tail) pathTuple = SplitPathByUnitMP(drawPath, selectedUnit);
+            DrawPathCurve(pathTuple.head, waypointPrefab);
+            DrawPathCurve(pathTuple.tail, waypointNextPrefab, true);
         }
     }
 
@@ -161,12 +184,15 @@ public class UnitManager : MonoBehaviour
         ErasePathCurve();
     }
 
-    void DrawPathCurve(Path path)
+    void DrawPathCurve(Path path, GameObject wpPrefab, bool add = false)
     {
-        pathCurve = new List<GameObject>();
+        if (!add)
+        {
+            pathCurve = new List<GameObject>();
+        }
         foreach (Vector3 point in path.waypoints)
         {
-            pathCurve.Add(Instantiate(waypointPrefab, point, Quaternion.identity));
+            pathCurve.Add(Instantiate(wpPrefab, point, Quaternion.identity));
         }
     }
 
@@ -237,9 +263,21 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    public Unit GetSelectedUnit()
+    public (Path head, Path tail) SplitPathByUnitMP(Path originalPath, Unit unit)
     {
-        return selectedUnit;
+        int MP = unit.getStats().movementPoints.value;
+        if (MP > originalPath.waypoints.Length)
+        {
+            return (head: originalPath, tail: new Path(new Vector3[0], true));
+        }
+        return (
+            head: new Path(originalPath.waypoints.Take(MP).ToArray(), true), 
+            tail: new Path(originalPath.waypoints.Skip(MP).ToArray(), true)
+            );
     }
 
+    Path getPartialPath(Path path, int n)
+    {
+        return new Path(path.waypoints.Take(n).ToArray(), path.successful);
+    }
 }

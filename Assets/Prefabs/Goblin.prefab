@@ -63,23 +63,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attack:
     _value: 5
-    maxValue: 0
+    _maxValue: 0
     uiIcon: {fileID: 21300000, guid: 60ce95d9a1bf06540851e5abb10eedb4, type: 3}
   damage:
     _value: 5
-    maxValue: 0
+    _maxValue: 0
     uiIcon: {fileID: 21300000, guid: 1c7598e2dff3e174b8017ddc1c9deaf2, type: 3}
   deffence:
     _value: 4
-    maxValue: 0
+    _maxValue: 0
     uiIcon: {fileID: 21300000, guid: ab71f67646c65cc4fb3c7fd4af14cebb, type: 3}
   helth:
     _value: 12
-    maxValue: 12
+    _maxValue: 12
     uiIcon: {fileID: 21300000, guid: 7ef472536c4845f4a9732b19e300e40b, type: 3}
   movementPoints:
-    _value: 6
-    maxValue: 6
+    _value: 3
+    _maxValue: 3
     uiIcon: {fileID: 21300000, guid: 82e9c9897cfb4b14eba32dd5cd63ace7, type: 3}
   elements: []
 --- !u!1001 &1539098349
