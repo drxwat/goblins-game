@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class AttackManager
 {
@@ -13,22 +14,32 @@ public class AttackManager
         baseHitChance = _baseHitChance;
     }
 
-    public void PerformAttack(Unit attacker, Unit defender, Vector3 attackDirection)
+    public void PerformAttack(Unit attacker, Unit defender, Vector3 attackDirection, bool counterAttack, Action onEnd = null)
     {
         int atkVal = attacker.getStats().attack.value;
         int defVal = defender.getStats().deffence.value;
 
         bool isHits = IsAttackHits(atkVal, defVal);
 
-        attacker.Attack(attackDirection);
+        attacker.Attack(attackDirection, delegate() {
+            if (counterAttack && !defender.isDead)
+            {
+                PerformAttack(defender, attacker, -attackDirection, false, onEnd);
+            } else
+            {
+                onEnd?.Invoke();
+            }
+        });
         if (isHits)
         {
+            SoundManager.instance.Play("AttackSpearPunch");
             int damage = GetBinomDamage(attacker.getStats().damage.value);
             Debug.Log("Hits enemy with " + damage + " damage");
             defender.BeAttacked(attackDirection);
             defender.TakeDamage(damage);
         } else
         {
+            SoundManager.instance.Play("AttackSpearMiss");
             Debug.Log("Misses target");
         }
     }

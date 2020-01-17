@@ -8,12 +8,14 @@ public class Unit : MonoBehaviour
     public float speed = .1f;
     public float rotationSpeed = 1f;
     public Sprite portrait;
+    public bool isDead = false;
 
     Vector3[] pathWaypoints;
     int currentWaypointIndes;
     Animator animator;
     Projector projector;
     UnitStats stats;
+    AnimationEvents animationEvents;
 
     public delegate void OnStatsChange(UnitStats stats);
     public OnStatsChange onStatsChange; // Broadcasts all stats each stat change
@@ -24,6 +26,7 @@ public class Unit : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         projector = GetComponentInChildren<Projector>();
         stats = GetComponent<UnitStats>();
+        animationEvents = GetComponentInChildren<AnimationEvents>();
 
         // setting grid position of unit and placing unit to grid center
         transform.position = Grid.instance.NodeFromWorldPosition(transform.position).worldPosition;
@@ -37,22 +40,34 @@ public class Unit : MonoBehaviour
 
     public void Move(Path path, Action onEndCallback = null)
     {
-        if (path.successful)
+        if (!path.successful || path.waypoints.Length == 0 || stats.movementPoints.value == 0)
         {
-            pathWaypoints = path.waypoints;
-            Action onMovementEndCallback = delegate ()
-            {
-                stats.movementPoints.value -= pathWaypoints.Length;
-                onEndCallback?.Invoke();
-            };
-            StopCoroutine(FollowPath(onMovementEndCallback));
-            StartCoroutine(FollowPath(onMovementEndCallback));
+            return;
         }
+        pathWaypoints = path.waypoints;
+        SoundManager.instance.Play("UnitFootsteps");
+        Action onMovementEndCallback = delegate ()
+        {
+            stats.movementPoints.value -= pathWaypoints.Length;
+            SoundManager.instance.Stop("UnitFootsteps");
+            onEndCallback?.Invoke();
+        };
+        StopCoroutine(FollowPath(onMovementEndCallback));
+        StartCoroutine(FollowPath(onMovementEndCallback));
     }
 
     public void Attack(Vector3 direction, Action callback = null)
     {
         transform.rotation = Quaternion.LookRotation(direction);
+
+        // Invocing callback only once and then unsubscribing
+        UnitAnimationEvent onAttackEnd = null;
+        onAttackEnd = delegate()
+        {
+            callback?.Invoke();
+            animationEvents.onAttackEndEvent -= onAttackEnd;
+        };
+        animationEvents.onAttackEndEvent += onAttackEnd;
         animator.SetTrigger("isAttacking");
     }
 
@@ -115,6 +130,8 @@ public class Unit : MonoBehaviour
     public void Die()
     {
         Debug.Log("Unit is Dead " + transform.gameObject.name);
+        SoundManager.instance.Play("GoblinDeath");
+        isDead = true;
         UnitManager.instance.RemoveUnit(this);
         animator.SetTrigger("isDead");
     }

@@ -87,13 +87,13 @@ public class UnitManager : MonoBehaviour
                 int pathLength = currentPath.waypoints.Length;
                 if (targetUnit != null && pathLength - 1 <= unitMP)
                 {
-                    MoveUnitToTargetAndAttack(currentPath, targetUnit, delegate () {
+                    MoveUnitToTargetAndAttack(selectedUnit, currentPath, targetUnit, delegate () {
                         DeselectTarget();
                     });
                 }
                 else
                 {
-                    MoveUnitToTarget(pathLength > unitMP ? getPartialPath(currentPath, unitMP): currentPath, delegate () {
+                    MoveUnitToTarget(selectedUnit, pathLength > unitMP ? getPartialPath(currentPath, unitMP): currentPath, delegate () {
                         DeselectTarget();
                     });
                 }
@@ -233,34 +233,41 @@ public class UnitManager : MonoBehaviour
 
     }
 
-    void MoveUnitToTarget(Path path, Action onMoveEnd = null)
+    void MoveUnitToTarget(Unit unit, Path path, Action onMoveEnd = null)
     {
-        selectedUnit.Move(path, onMoveEnd);
+        unit.Move(path, onMoveEnd);
         StopCoroutine(ErasePathCurveOneByOne());
         StartCoroutine(ErasePathCurveOneByOne());
     }
 
-    void MoveUnitToTargetAndAttack(Path path, Unit targetUnit, Action onMoveEnd = null)
+    void MoveUnitToTargetAndAttack(Unit atkerUnit, Path path, Unit targetUnit, Action onMoveEnd = null)
     {
         Vector3 attackDirection;
         if (path.waypoints.Count() == 1) // Unit already stands near the enemy
         {
             onMoveEnd();
-            attackDirection = path.waypoints[0] - selectedUnit.transform.position;
-            attackManager.PerformAttack(selectedUnit, targetUnit, attackDirection);
+            attackDirection = path.waypoints[0] - atkerUnit.transform.position;
+            OrderUnitToAttack(atkerUnit, targetUnit, attackDirection);
         }
         else if (path.waypoints.Count() > 1) // Unit have to firstly go the enemy
         {
             // remove last waypoint and calculate direction of attack
             attackDirection = path.waypoints[path.waypoints.Count() - 1] - path.waypoints[path.waypoints.Count() - 2];
             path.waypoints = path.waypoints.Take(path.waypoints.Count() - 1).ToArray();
-            selectedUnit.Move(path, delegate () {
+            atkerUnit.Move(path, delegate () {
                 onMoveEnd();
-                attackManager.PerformAttack(selectedUnit, targetUnit, attackDirection);
+                OrderUnitToAttack(atkerUnit, targetUnit, attackDirection);
             });
             StopCoroutine(ErasePathCurveOneByOne());
             StartCoroutine(ErasePathCurveOneByOne());
         }
+    }
+
+    void OrderUnitToAttack(Unit attacker, Unit defender, Vector3 attackDirection)
+    {
+        attackManager.PerformAttack(attacker, defender, attackDirection, true, delegate() {
+            Debug.Log("Attack session end");
+        });
     }
 
     public (Path head, Path tail) SplitPathByUnitMP(Path originalPath, Unit unit)
