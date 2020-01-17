@@ -10,6 +10,11 @@ public class Unit : MonoBehaviour
     public Sprite portrait;
     public bool isDead = false;
 
+    [HideInInspector]
+    public bool usedAttack = false;
+
+    float counterAttackMPCost = 0.2f;
+
     Vector3[] pathWaypoints;
     int currentWaypointIndes;
     Animator animator;
@@ -139,6 +144,52 @@ public class Unit : MonoBehaviour
     public void Say()
     {
         SoundManager.instance.Play("GoblinLaugh");
+    }
+
+    public void ResetActivity()
+    {
+        usedAttack = false;
+        stats.movementPoints.value = stats.movementPoints.maxValue;
+    }
+
+    public void EndActivity()
+    {
+        usedAttack = true;
+        if (stats.movementPoints.value > 0)
+        {
+            stats.movementPoints.value = 0;
+        }
+    }
+
+    public void RemoveMPForCouterAttackActivity()
+    {
+        int CAMP = Mathf.RoundToInt(this.getStats().movementPoints.maxValue * counterAttackMPCost);
+        this.getStats().movementPoints.value -= Math.Min(this.getStats().movementPoints.value, CAMP);
+    }
+
+    public bool HasCounterAttack()
+    {
+        float percentMP = (float)this.getStats().movementPoints.value / (float)this.getStats().movementPoints.maxValue;
+        if (percentMP < counterAttackMPCost)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public int GetAttacksAmount()
+    {
+        float percentMP = (float)this.getStats().movementPoints.value / (float)this.getStats().movementPoints.maxValue;
+        int atksAmount = 3;
+        if (percentMP <= 0.33)
+        {
+            atksAmount = 1;
+        }
+        else if (percentMP <= 0.66)
+        {
+            atksAmount = 2;
+        }
+        return atksAmount;
     }
 
 }

@@ -275,8 +275,24 @@ public class UnitManager : MonoBehaviour
 
     void OrderUnitToAttack(Unit attacker, Unit defender, Vector3 attackDirection)
     {
-        attackManager.PerformAttack(attacker, defender, attackDirection, true, delegate() {
+        if (attacker.usedAttack)
+        {
+            return;
+        }
+
+        ScheduleAttack(attacker, defender, attackDirection, 1, attacker.GetAttacksAmount());
+        attacker.EndActivity();
+    }
+
+    public void ScheduleAttack(Unit attacker, Unit defender, Vector3 attackDirection, int atkNumber, int atksAmount)
+    {
+        attackManager.PerformAttack(attacker, defender, attackDirection, true, delegate () {
             Debug.Log("Attack session end");
+            atkNumber++;
+            if (atkNumber <= atksAmount && !attacker.isDead && !defender.isDead)
+            {
+                ScheduleAttack(attacker, defender, attackDirection, atkNumber, atksAmount);
+            }
         });
     }
 

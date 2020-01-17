@@ -22,9 +22,12 @@ public class AttackManager
         bool isHits = IsAttackHits(atkVal, defVal);
 
         attacker.Attack(attackDirection, delegate() {
-            if (counterAttack && !defender.isDead)
+            if (counterAttack && !defender.isDead && defender.HasCounterAttack())
             {
-                PerformAttack(defender, attacker, -attackDirection, false, onEnd);
+                PerformAttack(defender, attacker, -attackDirection, false, delegate() {
+                    defender.RemoveMPForCouterAttackActivity();
+                    onEnd?.Invoke();
+                });
             } else
             {
                 onEnd?.Invoke();
