@@ -119,6 +119,9 @@ public class UnitManager : MonoBehaviour
         if (Grid.instance.NodeFromWorldPosition(unit.transform.position) == selectedTarget)
         {
             DeselectTarget();
+        } else if (unit == selectedUnit)
+        {
+            DeselectUnit();
         }
         unitsSet.Remove(unit);
     }
@@ -143,6 +146,7 @@ public class UnitManager : MonoBehaviour
             selectedUnit.ToggleHighlightSelection();
         }
         unit.ToggleHighlightSelection();
+        unit.Say();
         selectedUnit = unit;
         onUnitSelection?.Invoke(unit);
         DeselectTarget();
@@ -198,6 +202,7 @@ public class UnitManager : MonoBehaviour
 
     void ErasePathCurve()
     {
+        StopCoroutine(ErasePathCurveOneByOne());
         if (pathCurve != null)
         {
             foreach (GameObject waypointObj in pathCurve)
@@ -212,13 +217,18 @@ public class UnitManager : MonoBehaviour
     {
         if (pathCurve != null && pathCurve.Count > 0)
         {
+            Unit movingUnit = selectedUnit;
             int currentPathPointIdx = 0;
             Node nextNode = Grid.instance.NodeFromWorldPosition(pathCurve[currentPathPointIdx].transform.position);
             while(true)
             {
-                Node unitNode = Grid.instance.NodeFromWorldPosition(selectedUnit.transform.position);
+                Node unitNode = Grid.instance.NodeFromWorldPosition(movingUnit.transform.position);
                 if (unitNode == nextNode)
                 {
+                    if (pathCurve == null)
+                    {
+                        yield break;
+                    }
                     Destroy(pathCurve[currentPathPointIdx]);
                     currentPathPointIdx++;
                     if (currentPathPointIdx >= pathCurve.Count)

@@ -136,4 +136,9 @@ public class Unit : MonoBehaviour
         animator.SetTrigger("isDead");
     }
 
+    public void Say()
+    {
+        SoundManager.instance.Play("GoblinLaugh");
+    }
+
 }

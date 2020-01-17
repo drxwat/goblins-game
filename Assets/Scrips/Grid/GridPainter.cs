@@ -57,7 +57,8 @@ public class GridPainter : MonoBehaviour
                 }
                 hoverUnit = unit;
                 unitManager.onUnitHover?.Invoke(unit);
-            } else if (hoverUnit != null)
+            }
+            else if (hoverUnit != null)
             {
                 unitManager.onUnitLeave?.Invoke(hoverUnit);
                 hoverUnit = null;

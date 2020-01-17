@@ -35,12 +35,11 @@ public class Grid : MonoBehaviour
     public Node NodeFromWorldPosition(Vector3 position)
     {
         // Moving coordinate system to 0,0 be the bottom left of the grid
-        Vector3 adjustedPosition = position + Vector3.right * gridWorldSize.x / 2 + Vector3.forward * gridWorldSize.y / 2;
+        Vector3 adjustedPosition = position + Vector3.right * gridWorldSize.x / 2 + Vector3.forward * gridWorldSize.y / 2 + new Vector3(nodeRadius, 0, nodeRadius);
         float xPercentage = Mathf.Clamp01(adjustedPosition.x / gridWorldSize.x);
         float yPercentage = Mathf.Clamp01(adjustedPosition.z / gridWorldSize.y);
-
-        int x = Mathf.RoundToInt((gridSizeX - 1) * xPercentage);
-        int y = Mathf.RoundToInt((gridSizeY - 1) * yPercentage);
+        int x = Mathf.RoundToInt((gridSizeX * xPercentage) - 1);
+        int y = Mathf.RoundToInt((gridSizeY * yPercentage) - 1);
 
         return grid[x, y];
     }
