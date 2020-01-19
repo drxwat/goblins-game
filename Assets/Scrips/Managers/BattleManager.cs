@@ -73,6 +73,10 @@ public class BattleManager : MonoBehaviour
             }
         }
         SelectNextTeam();
+        if (unitManager.GetSelectedUnit() != null)
+        {
+            unitManager.DeselectUnit();
+        }
         turnNumber++;
     }
 
@@ -112,6 +116,24 @@ public class BattleManager : MonoBehaviour
         // TODO: Focus Unit
     }
 
+    public bool AreUnitsAllies(Unit a, Unit b)
+    {
+        foreach(Team t in teams)
+        {
+            // not optimal but short :D
+            if (t.units.Contains(a) && t.units.Contains(b))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool IsCurrentTeamUnit(Unit unit)
+    {
+        return currentTeam.units.Contains(unit);
+    }
+
     void PlaceTeamUnits(Team team, int nodeX, int nodeY)
     {
         for(int i = 0; i < team.storedUnits.Count; i++)
@@ -128,7 +150,7 @@ public class BattleManager : MonoBehaviour
     void SelectNextTeam()
     {
         int currentTeamIndex = teams.FindIndex(t => t == currentTeam);
-        if (currentTeamIndex == teams.Count)
+        if (currentTeamIndex == teams.Count - 1)
         {
             currentTeam = teams[0];
         }

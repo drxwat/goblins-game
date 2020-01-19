@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class NextUnitClickHandler : MonoBehaviour
+public class NextTurnClickHandler : MonoBehaviour
 {
     BattleManager battleManager;
     void Start()
@@ -10,6 +10,6 @@ public class NextUnitClickHandler : MonoBehaviour
 
     public void OnClick()
     {
-        battleManager.SelectNextUnit();
+        battleManager.EndTurn();
     }
 }

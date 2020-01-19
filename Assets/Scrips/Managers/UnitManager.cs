@@ -27,12 +27,18 @@ public class UnitManager : MonoBehaviour
     List<GameObject> pathCurve;
     Camera cam;
     AttackManager attackManager = new AttackManager();
+    BattleManager battleManager;
 
     // Start is called before the first frame update
     void Awake()
     {
         instance = this;
         cam = Camera.main;
+    }
+
+    void Start()
+    {
+        battleManager = BattleManager.instance;
     }
 
     void Update()
@@ -55,7 +61,7 @@ public class UnitManager : MonoBehaviour
             Node hitNode = Grid.instance.NodeFromWorldPosition(hit.point);
             Unit hitUnit = GetUnitFromNode(hitNode);
 
-            if (hitUnit != null)
+            if (hitUnit != null && battleManager.IsCurrentTeamUnit(hitUnit))
             {
                 if (selectedUnit && selectedUnit != hitUnit)
                 {
@@ -159,7 +165,7 @@ public class UnitManager : MonoBehaviour
         DeselectTarget();
     }
 
-    void DeselectUnit()
+    public void DeselectUnit()
     {
         Debug.Log("Unit Deselected");
         selectedUnit.ToggleHighlightSelection();
@@ -281,7 +287,7 @@ public class UnitManager : MonoBehaviour
 
     void OrderUnitToAttack(Unit attacker, Unit defender, Vector3 attackDirection)
     {
-        if (attacker.usedAttack)
+        if (attacker.usedAttack || battleManager.AreUnitsAllies(attacker, defender))
         {
             return;
         }

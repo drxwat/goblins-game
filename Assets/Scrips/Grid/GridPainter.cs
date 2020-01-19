@@ -24,9 +24,11 @@ public class GridPainter : MonoBehaviour
     {
         if (EventSystem.current.IsPointerOverGameObject())
         {
+            tileHover.SetActive(false);
             return;
         }
 
+        tileHover.SetActive(true);
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
