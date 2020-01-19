@@ -118,6 +118,12 @@ public class UnitManager : MonoBehaviour
             }
         }
     }
+
+    public bool IsBlocked()
+    {
+        return isUnitActing;
+    }
+
     public Unit GetSelectedUnit()
     {
         return selectedUnit;
@@ -292,7 +298,7 @@ public class UnitManager : MonoBehaviour
         Vector3 attackDirection;
         if (path.waypoints.Count() == 1) // Unit already stands near the enemy
         {
-            onMoveEnd();
+            onMoveEnd?.Invoke();
             attackDirection = path.waypoints[0] - atkerUnit.transform.position;
             OrderUnitToAttack(atkerUnit, targetUnit, attackDirection);
         }
@@ -302,7 +308,7 @@ public class UnitManager : MonoBehaviour
             attackDirection = path.waypoints[path.waypoints.Count() - 1] - path.waypoints[path.waypoints.Count() - 2];
             path.waypoints = path.waypoints.Take(path.waypoints.Count() - 1).ToArray();
             atkerUnit.Move(path, delegate () {
-                onMoveEnd();
+                onMoveEnd?.Invoke();
                 OrderUnitToAttack(atkerUnit, targetUnit, attackDirection);
             });
             StopCoroutine(ErasePathCurveOneByOne());
@@ -321,7 +327,7 @@ public class UnitManager : MonoBehaviour
         attacker.EndActivity();
     }
 
-    public void ScheduleAttack(Unit attacker, Unit defender, Vector3 attackDirection, int atkNumber, int atksAmount)
+    void ScheduleAttack(Unit attacker, Unit defender, Vector3 attackDirection, int atkNumber, int atksAmount)
     {
         attackManager.PerformAttack(attacker, defender, attackDirection, true, delegate () {
             Debug.Log("Attack session end");
@@ -333,7 +339,7 @@ public class UnitManager : MonoBehaviour
         });
     }
 
-    public (Path head, Path tail) SplitPathByUnitMP(Path originalPath, Unit unit)
+    (Path head, Path tail) SplitPathByUnitMP(Path originalPath, Unit unit)
     {
         int MP = unit.getStats().movementPoints.value;
         if (MP > originalPath.waypoints.Length)

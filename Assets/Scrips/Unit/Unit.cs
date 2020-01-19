@@ -49,6 +49,7 @@ public class Unit : MonoBehaviour
     {
         if (!path.successful || path.waypoints.Length == 0 || stats.movementPoints.value == 0)
         {
+            onEndCallback?.Invoke();
             return;
         }
         pathWaypoints = path.waypoints;

@@ -92,6 +92,11 @@ public class BattleManager : MonoBehaviour
 
     public void SelectNextUnit()
     {
+        if (unitManager.IsBlocked())
+        {
+            return;
+        }
+
         List<Unit> units = currentTeam.units.ToList();
         Unit selectedUnit = unitManager.GetSelectedUnit();
         Unit nextUnit = null;

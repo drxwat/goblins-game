@@ -5,9 +5,10 @@ using UnityEngine.UI;
 
 public class TurnStartText : MonoBehaviour
 {
-    Image wrapper;
-    Text text;
-    void Start()
+    public Image wrapper;
+    public Text text;
+
+    void Awake()
     {
         wrapper = GetComponent<Image>();
         text = GetComponentInChildren<Text>();
