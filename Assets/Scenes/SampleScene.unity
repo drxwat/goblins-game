@@ -208,7 +208,7 @@ Transform:
   m_GameObject: {fileID: 92958349}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0.06}
-  m_LocalScale: {x: 4, y: 1, z: 4}
+  m_LocalScale: {x: 3.98, y: 1, z: 3.98}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -658,6 +658,7 @@ GameObject:
   - component: {fileID: 359259377}
   - component: {fileID: 359259376}
   - component: {fileID: 359259375}
+  - component: {fileID: 359259378}
   m_Layer: 5
   m_Name: NextUnitBtn
   m_TagString: Untagged
@@ -728,15 +729,15 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11500000, guid: df75812ddeb720743ad288d15a0b8e7a, type: 3}
-        m_MethodName: set_name
-        m_Mode: 5
+      - m_Target: {fileID: 359259378}
+        m_MethodName: OnClick
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: SelectNextUnit
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -778,6 +779,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 359259373}
   m_CullTransparentMesh: 0
+--- !u!114 &359259378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 359259373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f7f0230253d2864f878710a5bdaf4fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &466218621
 GameObject:
   m_ObjectHideFlags: 0
@@ -1175,37 +1188,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &780329972
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 780329973}
-  m_Layer: 0
-  m_Name: Units
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &780329973
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 780329972}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 325.71396, y: 405.11032, z: -242.95}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1519177369}
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &844083447
 GameObject:
@@ -1669,12 +1651,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 7860478725386548331}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1519177369 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3091929290447639578, guid: d31656539a28a9f459e872ea09e9c61c,
-    type: 3}
-  m_PrefabInstance: {fileID: 1772461924}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1642555028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1687,6 +1663,7 @@ GameObject:
   - component: {fileID: 1642555032}
   - component: {fileID: 1642555031}
   - component: {fileID: 1642555030}
+  - component: {fileID: 1642555033}
   m_Layer: 5
   m_Name: NextTurnBtn
   m_TagString: Untagged
@@ -1756,7 +1733,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1642555031}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1642555033}
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1642555031
@@ -1796,6 +1784,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1642555028}
   m_CullTransparentMesh: 0
+--- !u!114 &1642555033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642555028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d7eddb1469152e4aa012fa7d4c7c6c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1653698682
 GameObject:
   m_ObjectHideFlags: 0
@@ -1880,7 +1880,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 780329973}
+    m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3091929290447639579, guid: d31656539a28a9f459e872ea09e9c61c,
         type: 3}
@@ -1890,17 +1890,17 @@ PrefabInstance:
     - target: {fileID: 3091929290447639578, guid: d31656539a28a9f459e872ea09e9c61c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -343.83
+      value: -18.49
       objectReference: {fileID: 0}
     - target: {fileID: 3091929290447639578, guid: d31656539a28a9f459e872ea09e9c61c,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -405.11032
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3091929290447639578, guid: d31656539a28a9f459e872ea09e9c61c,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 223.96
+      value: -18.59
       objectReference: {fileID: 0}
     - target: {fileID: 3091929290447639578, guid: d31656539a28a9f459e872ea09e9c61c,
         type: 3}
@@ -1925,7 +1925,7 @@ PrefabInstance:
     - target: {fileID: 3091929290447639578, guid: d31656539a28a9f459e872ea09e9c61c,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3091929290447639578, guid: d31656539a28a9f459e872ea09e9c61c,
         type: 3}

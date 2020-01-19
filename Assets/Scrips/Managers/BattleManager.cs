@@ -17,6 +17,7 @@ public class BattleManager : MonoBehaviour
     Grid grid;
     UnitsStore unitsStore;
     UnitManager unitManager;
+    CameraMotor cameraMotor;
 
     System.Random random = new System.Random();
 
@@ -30,6 +31,7 @@ public class BattleManager : MonoBehaviour
         grid = Grid.instance;
         unitsStore = UnitsStore.instance;
         unitManager = UnitManager.instance;
+        cameraMotor = Camera.main.GetComponent<CameraMotor>();
 
         currentTeam = teams[1]; // defender move first
 
@@ -113,6 +115,7 @@ public class BattleManager : MonoBehaviour
         }
 
         unitManager.SelectUnit(nextUnit);
+        cameraMotor.MoveTo(nextUnit.transform.position);
         // TODO: Focus Unit
     }
 
