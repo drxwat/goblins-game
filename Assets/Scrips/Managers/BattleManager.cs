@@ -18,6 +18,7 @@ public class BattleManager : MonoBehaviour
     UnitsStore unitsStore;
     UnitManager unitManager;
     CameraMotor cameraMotor;
+    TurnStartText turnStartText;
 
     System.Random random = new System.Random();
 
@@ -32,8 +33,10 @@ public class BattleManager : MonoBehaviour
         unitsStore = UnitsStore.instance;
         unitManager = UnitManager.instance;
         cameraMotor = Camera.main.GetComponent<CameraMotor>();
+        turnStartText = GameObject.FindObjectOfType<TurnStartText>();
 
-        currentTeam = teams[1]; // defender move first
+        currentTeam = teams[0]; // attacker moves first
+        ShowTeamTurnUI();
 
         // assuming for now that there are two teams only and they have random units
         // TODO: Teams should be inserted from outside of the script (probably by UI on previous screen)
@@ -74,7 +77,11 @@ public class BattleManager : MonoBehaviour
                 u.ResetActivity();
             }
         }
+
         SelectNextTeam();
+        ShowTeamTurnUI();
+        FocusCameraOnTeam(currentTeam);
+
         if (unitManager.GetSelectedUnit() != null)
         {
             unitManager.DeselectUnit();
@@ -115,8 +122,7 @@ public class BattleManager : MonoBehaviour
         }
 
         unitManager.SelectUnit(nextUnit);
-        cameraMotor.MoveTo(nextUnit.transform.position);
-        // TODO: Focus Unit
+        cameraMotor.MoveTo(nextUnit.transform.position); // Focus the selected unit
     }
 
     public bool AreUnitsAllies(Unit a, Unit b)
@@ -173,6 +179,23 @@ public class BattleManager : MonoBehaviour
             }
         }
         return null;
+    }
+
+    void ShowTeamTurnUI()
+    {
+        turnStartText.ShowText(currentTeam.name + " Turn", 3f);
+    }
+
+    void FocusCameraOnTeam(Team team)
+    {
+        Vector3[] teamPositions = team.units.Where(u => !u.isDead).Select(u => u.transform.position).ToArray();
+        Vector3 sum = Vector3.zero;
+        foreach (Vector3 pos in teamPositions)
+        {
+            sum += pos;
+        }
+        Vector3 centroid = sum / teamPositions.Length;
+        cameraMotor.MoveTo(centroid);
     }
 
 }
