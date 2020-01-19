@@ -35,6 +35,8 @@ public class Unit : MonoBehaviour
 
         // setting grid position of unit and placing unit to grid center
         transform.position = Grid.instance.NodeFromWorldPosition(transform.position).worldPosition;
+        OccupyGridNode();
+
         // registring unit in manager
         UnitManager.instance.AddUnit(this);
         stats.onStatChange += delegate (Stat stat, int value)
@@ -110,7 +112,7 @@ public class Unit : MonoBehaviour
         }
     }
 
-    public void ToggleHighlightSelection()
+    public void ToggleSelection()
     {
         projector.enabled = !projector.enabled;
     }
@@ -135,10 +137,12 @@ public class Unit : MonoBehaviour
     public void Die()
     {
         Debug.Log("Unit is Dead " + transform.gameObject.name);
+        FreeGridNode();
         SoundManager.instance.Play("GoblinDeath");
         isDead = true;
         UnitManager.instance.RemoveUnit(this);
         animator.SetTrigger("isDead");
+        FreeGridNode();
     }
 
     public void Say()
@@ -197,4 +201,13 @@ public class Unit : MonoBehaviour
         return atksAmount;
     }
 
+    public void OccupyGridNode()
+    {
+        Grid.instance.NodeFromWorldPosition(transform.position).walkable = false;
+    }
+
+    public void FreeGridNode()
+    {
+        Grid.instance.NodeFromWorldPosition(transform.position).walkable = true;
+    }
 }

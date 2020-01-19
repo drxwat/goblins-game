@@ -83,7 +83,8 @@ public class Grid : MonoBehaviour
                     Vector3.right * (x * nodeDiameter + nodeRadius) + 
                     Vector3.forward * (y * nodeDiameter + nodeRadius);
                 bool walkable = !(Physics.CheckSphere(nodeWorldPosition, nodeRadius, unwalkableMask));
-                grid[x, y] = new Node(walkable, nodeWorldPosition, x, y);
+                bool hoverable = walkable;
+                grid[x, y] = new Node(walkable, hoverable, nodeWorldPosition, x, y);
             }
         }
     }

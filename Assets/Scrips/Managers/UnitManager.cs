@@ -25,6 +25,8 @@ public class UnitManager : MonoBehaviour
     Node selectedTarget;
     Path currentPath;
     List<GameObject> pathCurve;
+    bool isUnitActing = false;
+
     Camera cam;
     AttackManager attackManager = new AttackManager();
     BattleManager battleManager;
@@ -33,17 +35,17 @@ public class UnitManager : MonoBehaviour
     void Awake()
     {
         instance = this;
-        cam = Camera.main;
     }
 
     void Start()
     {
         battleManager = BattleManager.instance;
+        cam = Camera.main;
     }
 
     void Update()
     {
-        if (EventSystem.current.IsPointerOverGameObject())
+        if (EventSystem.current.IsPointerOverGameObject() || isUnitActing)
         {
             return;
         }
@@ -63,11 +65,6 @@ public class UnitManager : MonoBehaviour
 
             if (hitUnit != null && battleManager.IsCurrentTeamUnit(hitUnit))
             {
-                if (selectedUnit && selectedUnit != hitUnit)
-                {
-                    DeselectUnit();
-                }
-                //TODO: prevent enemy selection
                 SelectUnit(hitUnit);
             }
             else if (selectedUnit) 
@@ -100,14 +97,18 @@ public class UnitManager : MonoBehaviour
                 int pathLength = currentPath.waypoints.Length;
                 if (targetUnit != null && pathLength - 1 <= unitMP)
                 {
+                    isUnitActing = true;
                     MoveUnitToTargetAndAttack(selectedUnit, currentPath, targetUnit, delegate () {
                         DeselectTarget();
+                        isUnitActing = false;
                     });
                 }
                 else
                 {
+                    isUnitActing = true;
                     MoveUnitToTarget(selectedUnit, pathLength > unitMP ? GetPartialPath(currentPath, unitMP): currentPath, delegate () {
                         DeselectTarget();
+                        isUnitActing = false;
                     });
                 }
             }
@@ -154,11 +155,12 @@ public class UnitManager : MonoBehaviour
     public void SelectUnit(Unit unit)
     {
         Debug.Log("Unit Selected" + unit);
-        if (selectedUnit != null)
+        if (selectedUnit != null && selectedUnit != unit)
         {
-            selectedUnit.ToggleHighlightSelection();
+            DeselectUnit();
         }
-        unit.ToggleHighlightSelection();
+        unit.FreeGridNode();
+        unit.ToggleSelection();
         unit.Say();
         selectedUnit = unit;
         onUnitSelection?.Invoke(unit);
@@ -168,7 +170,8 @@ public class UnitManager : MonoBehaviour
     public void DeselectUnit()
     {
         Debug.Log("Unit Deselected");
-        selectedUnit.ToggleHighlightSelection();
+        selectedUnit.ToggleSelection();
+        selectedUnit.OccupyGridNode();
         onUnitDeselection?.Invoke(selectedUnit);
         selectedUnit = null;
         DeselectTarget();
@@ -176,7 +179,23 @@ public class UnitManager : MonoBehaviour
 
     void SelectTarget(Node targetNode)
     {
+        if (selectedTarget == targetNode)
+        {
+            return;
+        }
+
+        if (selectedTarget != null)
+        {
+            DeselectTarget();
+        }
+
         selectedTarget = targetNode;
+
+        Unit targetUnit = GetUnitFromNode(selectedTarget);
+        if (targetUnit != null)
+        {
+            targetUnit.FreeGridNode();
+        }
 
         currentPath = PathFinder.instance.FindPath(selectedUnit.transform.position, selectedTarget.worldPosition);
         if (currentPath.successful)
@@ -185,8 +204,6 @@ public class UnitManager : MonoBehaviour
             if (GetUnitFromNode(targetNode) != null)
             {
                 drawPath = GetPartialPath(drawPath, drawPath.waypoints.Count() - 1);
-/*                drawPath = new Path(drawPath.waypoints, drawPath.successful);
-                drawPath.waypoints = drawPath.waypoints.Take(drawPath.waypoints.Count() - 1).ToArray();*/
             }
             ErasePathCurve();
             (Path head, Path tail) pathTuple = SplitPathByUnitMP(drawPath, selectedUnit);
@@ -197,6 +214,14 @@ public class UnitManager : MonoBehaviour
 
     void DeselectTarget()
     {
+        if (selectedTarget != null)
+        {
+            Unit targetUnit = GetUnitFromNode(selectedTarget);
+            if (targetUnit != null && targetUnit != selectedUnit)
+            {
+                targetUnit.OccupyGridNode();
+            }
+        }
         selectedTarget = null;
         ErasePathCurve();
     }

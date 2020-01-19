@@ -5,6 +5,7 @@ public class Node : IHeapItem<Node>
 {
 
     public bool walkable;
+    public bool hoverable;
     public Vector3 worldPosition;
     public int gridX;
     public int gridY;
@@ -14,9 +15,10 @@ public class Node : IHeapItem<Node>
     public Node parent;
     int heapIndex;
 
-    public Node(bool _walkable, Vector3 _worldPos, int _gridX, int _gridY)
+    public Node(bool _walkable, bool _hoverable, Vector3 _worldPos, int _gridX, int _gridY)
     {
         walkable = _walkable;
+        hoverable = _hoverable;
         worldPosition = _worldPos;
         gridX = _gridX;
         gridY = _gridY;

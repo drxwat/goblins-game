@@ -17,9 +17,10 @@ public class TurnStartText : MonoBehaviour
 
     public void ShowText(string displayText, float timeFor = 3f)
     {
+        transform.gameObject.SetActive(true);
         if (timeFor == 0f)
         {
-            FadeIn(displayText);
+            StartCoroutine(FadeIn(displayText));
         } else
         {
             StartCoroutine(ShowTemp(displayText, timeFor));
@@ -33,25 +34,24 @@ public class TurnStartText : MonoBehaviour
 
     IEnumerator ShowTemp(string displayText, float delay = 3f)
     {
+        yield return StartCoroutine(FadeIn(displayText));
+        yield return new WaitForSeconds(delay);
+        yield return StartCoroutine(FadeOut());
+    }
+
+    IEnumerator FadeOut()
+    {
+        StartCoroutine(FadeOutColorToAlpha(1f, wrapper));
+        yield return StartCoroutine(FadeOutColorToAlpha(0.3f, text));
+        transform.gameObject.SetActive(false);
+        yield return null;
+    }
+
+    IEnumerator FadeIn(string displayText)
+    {
         text.text = displayText;
         StartCoroutine(FadeInColorToAlpha(0.5f, wrapper, 0.39f));
         yield return StartCoroutine(FadeInColorToAlpha(1f, text));
-        yield return new WaitForSeconds(delay);
-        StartCoroutine(FadeOutColorToAlpha(1f, wrapper));
-        yield return StartCoroutine(FadeOutColorToAlpha(0.3f, text));
-    }
-
-    void FadeOut()
-    {
-        StartCoroutine(FadeOutColorToAlpha(1f, text));
-        StartCoroutine(FadeOutColorToAlpha(1f, wrapper));
-    }
-
-    void FadeIn(string displayText)
-    {
-        text.text = displayText;
-        StartCoroutine(FadeInColorToAlpha(1f, text));
-        StartCoroutine(FadeInColorToAlpha(0.5f, wrapper, 0.39f));
     }
 
     IEnumerator FadeInColorToAlpha(float time, Graphic text, float alpha = 1f)

@@ -61,6 +61,7 @@ public class BattleManager : MonoBehaviour
         {
             u.RotateTo(u.transform.position);
         }
+        FocusCameraOnTeam(currentTeam);
     }
 
     public Team GetCurrentTeam()

@@ -38,7 +38,7 @@ public class GridPainter : MonoBehaviour
         }
 
         Node hitNode = Grid.instance.NodeFromWorldPosition(hit.point);
-        if (hitNode.walkable && (tileHover.transform.position.x != hitNode.worldPosition.x || tileHover.transform.position.z != hitNode.worldPosition.z))
+        if (hitNode.hoverable && (tileHover.transform.position.x != hitNode.worldPosition.x || tileHover.transform.position.z != hitNode.worldPosition.z))
         {
             tileHover.transform.position = hitNode.worldPosition + heightBias;
 
