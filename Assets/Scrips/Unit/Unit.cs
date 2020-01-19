@@ -76,7 +76,7 @@ public class Unit : MonoBehaviour
         animator.SetTrigger("isAttacking");
     }
 
-    public void BeAttacked(Vector3 direction)
+    public void RotateTo(Vector3 direction)
     {
         transform.rotation = Quaternion.LookRotation(-direction);
     }
@@ -159,6 +159,11 @@ public class Unit : MonoBehaviour
         {
             stats.movementPoints.value = 0;
         }
+    }
+
+    public bool HasActivity()
+    {
+        return !isDead && usedAttack == false;
     }
 
     public void RemoveMPForCouterAttackActivity()

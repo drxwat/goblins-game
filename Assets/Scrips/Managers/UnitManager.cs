@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Linq;
 using System;
 
@@ -36,6 +37,11 @@ public class UnitManager : MonoBehaviour
 
     void Update()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
         if (Input.GetMouseButtonDown(0)) // Unit selection/deselection
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -55,6 +61,7 @@ public class UnitManager : MonoBehaviour
                 {
                     DeselectUnit();
                 }
+                //TODO: prevent enemy selection
                 SelectUnit(hitUnit);
             }
             else if (selectedUnit) 
@@ -93,7 +100,7 @@ public class UnitManager : MonoBehaviour
                 }
                 else
                 {
-                    MoveUnitToTarget(selectedUnit, pathLength > unitMP ? getPartialPath(currentPath, unitMP): currentPath, delegate () {
+                    MoveUnitToTarget(selectedUnit, pathLength > unitMP ? GetPartialPath(currentPath, unitMP): currentPath, delegate () {
                         DeselectTarget();
                     });
                 }
@@ -138,7 +145,7 @@ public class UnitManager : MonoBehaviour
         return null;
     }
 
-    void SelectUnit(Unit unit)
+    public void SelectUnit(Unit unit)
     {
         Debug.Log("Unit Selected" + unit);
         if (selectedUnit != null)
@@ -171,7 +178,7 @@ public class UnitManager : MonoBehaviour
             Path drawPath = currentPath;
             if (GetUnitFromNode(targetNode) != null)
             {
-                drawPath = getPartialPath(drawPath, drawPath.waypoints.Count() - 1);
+                drawPath = GetPartialPath(drawPath, drawPath.waypoints.Count() - 1);
 /*                drawPath = new Path(drawPath.waypoints, drawPath.successful);
                 drawPath.waypoints = drawPath.waypoints.Take(drawPath.waypoints.Count() - 1).ToArray();*/
             }
@@ -240,7 +247,6 @@ public class UnitManager : MonoBehaviour
                 yield return null;
             }
         }
-
     }
 
     void MoveUnitToTarget(Unit unit, Path path, Action onMoveEnd = null)
@@ -309,7 +315,7 @@ public class UnitManager : MonoBehaviour
             );
     }
 
-    Path getPartialPath(Path path, int n)
+    Path GetPartialPath(Path path, int n)
     {
         return new Path(path.waypoints.Take(n).ToArray(), path.successful);
     }

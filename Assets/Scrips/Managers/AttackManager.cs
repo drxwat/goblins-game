@@ -38,7 +38,7 @@ public class AttackManager
             SoundManager.instance.Play("AttackSpearPunch");
             int damage = GetBinomDamage(attacker.getStats().damage.value);
             Debug.Log("Hits enemy with " + damage + " damage");
-            defender.BeAttacked(attackDirection);
+            defender.RotateTo(attackDirection);
             defender.TakeDamage(damage);
         } else
         {

@@ -10,7 +10,8 @@ public class Grid : MonoBehaviour
     public Node[,] grid;
 
     float nodeDiameter;
-    int gridSizeX, gridSizeY;
+    [HideInInspector]
+    public int gridSizeX, gridSizeY;
 
     public int MaxSize
     {
